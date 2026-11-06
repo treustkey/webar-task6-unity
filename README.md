@@ -1,28 +1,39 @@
 # Задание 6 — Unity WebXR
 
-## Фактический статус
-Подготовлены исходные файлы и автоматизация создания сцены/сборки. Это заготовка проекта, не законченная работа: WebGL Build Support не установлен; сборка и тест на мобильном устройстве не выполнены. Размер сборки не измерен. docs/index.html — честная страница статуса, не имитация Unity.
+Проект расположен в C:\Users\user\Documents\Task6_Unity_WebXR.
+Редактор: Unity 6000.3.7f1.
 
-## Подготовка
-1. Unity Hub: установить WebGL Build Support для 6000.3.7f1. Открыть эту папку как проект.
-2. Дождаться установки пакетов OpenUPM. В Package Manager импортировать BiRP Sample пакета WebXR Interactions (версию interactions при необходимости выбрать доступную в реестре).
-3. Window > WebXR > Copy WebGLTemplates. Project Settings > XR Plug-in Management > WebGL: включить WebXR Export; в WebXR Settings отключить Display Submodule для Built-in Render Pipeline.
-4. Выбрать WebGL. Выполнить WebAR > Create Scene: используется оригинальный prefab WebXRCameraSet со встроенными WebXRController. Если prefab не найден, команда явно завершится ошибкой.
-5. Проверить имя шаблона в Assets/WebGLTemplates. BuildProject.cs использует PROJECT:WebXR; изменить его при другом имени установленного шаблона. WebAR > Build WebGL. Compression Disabled, Decompression Fallback false, threadsSupport false.
-6. Выгрузить docs на GitHub Pages. Размер после успешной сборки записывается в BUILD_SIZE.txt. Не коммитить Library, Temp и логи.
+## Открытие и демонстрация
+Запустить Open_Project.cmd или добавить эту папку через Unity Hub → Projects → Add project from disk.
+Открыть Assets/Scenes/ViewerSpace.unity и нажать Play. Куб должен находиться перед активной камерой на расстоянии 1.2 м и оставаться в центре взгляда при её перемещении.
+В Hierarchy есть оригинальный BiRP WebXRCameraSet пакета De-Panther, камеры AR/VR и контроллеры. Viewer-space Cube содержит ViewerObject.
 
-## Сценарий
-ViewerObject.LateUpdate привязывает куб на расстоянии 1.2 м к активной Camera.main. Он остаётся в центре поля зрения (viewer-space), а не прикрепляется к поверхности.
+## Настройки
+WebXR Export / WebXR Interactions 0.25.0 включены локальными пакетами (лицензия Apache-2.0 в UPSTREAM-LICENSE).
+XR Plug-in Management → WebGL: WebXRLoader.
+WebXR Settings: Disable XR Display Subsystem = true (Built-in Render Pipeline), AR reference space = local.
+WebGL: шаблон WebXR2020; compression Disabled; decompression fallback false; threads false.
+Сцена добавлена в Build Settings. Команда WebAR → Configure Project повторно сохраняет настройки.
+WebAR → Build WebGL создаёт сборку в docs; размер записывается в BUILD_SIZE.txt.
 
-## Протокол тестирования (не выполнен)
-Записать модель телефона, ОС, браузер, наличие ARCore/WebXR, дату, время загрузки, размер передачи, вход/выход AR, видимость куба и поведение при движении головы. Проверить обычный браузер. На несовместимых браузерах AR не считать пройденным. Репозиторий upstream предупреждает об ограниченной мобильной поддержке.
+## Структура
+Assets/Scripts/ViewerObject.cs — привязка объекта к активной камере.
+Assets/Editor/BuildProject.cs — создание сцены, настройка WebXR, сборка.
+Assets/Scenes/ViewerSpace.unity — готовая сцена.
+Assets/WebGLTemplates — оригинальные шаблоны De-Panther.
+Packages/com.de-panther.webxr* — исходные пакеты.
 
-## Источники
-https://github.com/De-Panther/unity-webxr-export
-https://github.com/De-Panther/unity-webxr-export/blob/master/Documentation/Getting-Started.md
+## Проверка
+Скрипты и настройка сцены проверены запуском Unity в batchmode.
+Мобильный AR требует HTTPS и браузера с WebXR immersive-ar. Физическое мобильное тестирование пока не выполнено. Зафиксировать устройство, ОС, браузер, загрузку, вход и выход из AR, положение куба, размер передачи и ошибки.
 
-Пакеты WebXR 0.25.0 и WebGLTemplates включены локально с лицензией Apache-2.0. Шаблон сборки: WebXR2020. Папка Assets содержит BiRP WebXRCameraSet. Редактор пока не завершил повторный импорт пакетов; готовая сцена не подтверждена.
+Источник: https://github.com/De-Panther/unity-webxr-export
+
+WebGL Build Support установлен для Unity 6000.3.7f1. Проверка сцены: 5 камер, 2 контроллера, отсутствующих скриптов 0. Результат в VALIDATION.txt.
 
 
-Обновление проверки: Unity batchmode завершился с кодом 0; Assets/Scenes/ViewerSpace.unity успешно создана. Скрипты компилируются. WebGL-сборка и мобильный тест по-прежнему не выполнены. Архив содержит runtime/editor части пакетов; примеры с текстурами исключены для уменьшения размера.
+Open_Project.cmd ограничивает BEE_BUILD_THREADS до 8, чтобы сборка не запускала сотни компиляторов и не исчерпывала память компьютера.
+
+
+WebGL-сборка успешно завершена (Unity exit 0). Готовые файлы находятся в docs. BUILD_SIZE.txt содержит отчёт Unity. Для запуска в браузере нужна раздача docs через HTTP localhost или HTTPS; двойной щелчок index.html не подходит.
 
